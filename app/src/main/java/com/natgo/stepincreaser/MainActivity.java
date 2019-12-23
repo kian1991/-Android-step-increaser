@@ -53,11 +53,11 @@ public class MainActivity extends AppCompatActivity implements
     public static int month;
     public static int dayOfMonth;
 
-    public static int fromHour = 6;
+    public static int fromHour = 0;
     public static int fromMinute = 0;
 
-    public static int toHour = 18;
-    public static int toMinute = 0;
+    public static int toHour = 23;
+    public static int toMinute = 59;
 
 
 
@@ -118,10 +118,10 @@ public class MainActivity extends AppCompatActivity implements
                 new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        fromHour = hourOfDay + 1;
+                        fromHour = hourOfDay;
                         fromMinute = minute;
                     }
-                }, 6, 0, true).show();
+                }, 0, 0, true).show();
             }
         });
 
@@ -132,10 +132,10 @@ public class MainActivity extends AppCompatActivity implements
                 new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        toHour = hourOfDay + 1;
+                        toHour = hourOfDay;
                         toMinute = minute;
                     }
-                }, 20, 0, true).show();
+                }, 23, 59, true).show();
             }
         });
 
@@ -159,10 +159,10 @@ public class MainActivity extends AppCompatActivity implements
 
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, dayOfMonth, toHour, toMinute);
-        Log.i(TAG, "ENDTime: " + cal.getTimeInMillis());
+        Log.i(TAG, "ENDTime: " + cal.getTime().toString());
         long endTime = cal.getTimeInMillis();
         cal.set(year, month, dayOfMonth, fromHour, fromMinute);
-        Log.i(TAG, "STARTTime: " + cal.getTimeInMillis());
+        Log.i(TAG, "STARTTime: " + cal.getTime().toString());
 
         long startTime = cal.getTimeInMillis();
 
@@ -183,17 +183,21 @@ public class MainActivity extends AppCompatActivity implements
         dataSet.add(point);
 
         DataUpdateRequest updateRequest = new DataUpdateRequest.Builder().setDataSet(dataSet).setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS).build();
-        Fitness.HistoryApi.updateData(mGoogleApiClient, updateRequest).addStatusListener(new PendingResult.StatusListener() {
-            @Override
-            public void onComplete(final Status status) {
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Added! :p", Toast.LENGTH_LONG).show();
-                    }
-                });
-                Log.e(TAG, "STATUS: " + status);
-            }
-        });
+        Boolean debug = false;
+        if(!debug){
+            Fitness.HistoryApi.updateData(mGoogleApiClient, updateRequest).addStatusListener(new PendingResult.StatusListener() {
+                @Override
+                public void onComplete(final Status status) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Added! :p", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    Log.e(TAG, "STATUS: " + status);
+                }
+            });
+        }
+        /**/
 
     }
 
